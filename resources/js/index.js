@@ -3,21 +3,24 @@ requirejs.config({
 });
 
 requirejs(['vendors/backbone.js'], function(){
-    var Todoitem =  Backbone.Model.extend({urlRoot: 'http://private-1ae31-backboneapi.apiary-mock.com/todos/'})
-    var todoitem = new Todoitem({id: 770 })
-    console.log(JSON.stringify(todoitem))
-    var TodoitemView = Backbone.View.extend({
+    var Todoitems =  Backbone.Collection.extend({url: 'http://private-1ae31-backboneapi.apiary-mock.com/todos'})
+    var todoitems = new Todoitems()
+    var TodoitemsView = Backbone.View.extend({
+        renderItem: function(item){
+            var html = '<li>' + item.get('title') + '</li>'
+            $(todoitemsView.el).append(html)
+        },
         render: function(){
-            var html = '<li>' + this.model.get('title') + '</li>'
-            $(this.el).html(html)
+            this.collection.each(this.renderItem)
         }
+
     })
-    var todoitemView = new TodoitemView({model: todoitem})
+    var todoitemsView = new TodoitemsView({collection: todoitems})
 
 
-    todoitem.fetch({success: function(){
-        todoitemView.render()
-        $('#app').html(todoitemView.el)
+    todoitems.fetch({success: function(){
+        todoitemsView.render()
+        $('#app').html(todoitemsView.el)
     }})
 })
 
